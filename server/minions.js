@@ -6,12 +6,12 @@ const { getAllFromDatabase,
     updateInstanceInDatabase,
     deleteFromDatabasebyId,
     deleteAllFromDatabase } = require('./db');
-const errorhandler = require('errorhandler')
+
 
 
 minionsRouter.get('/', (req, res, next) => {
     try {
-        const minions = getAllFromDatabase("minions");
+        const minions = getAllFromDatabase('minions');
         res.send(minions);
     } catch (err) {
         next(err);
@@ -20,7 +20,7 @@ minionsRouter.get('/', (req, res, next) => {
 
 minionsRouter.post('/', (req, res, next) => {
     try {
-        const newMinion = addToDatabase(req.body);
+        const newMinion = addToDatabase('minions', req.body);
         res.status(201).send(newMinion);
     } catch (err) {
         next(err);
@@ -29,7 +29,7 @@ minionsRouter.post('/', (req, res, next) => {
 
 minionsRouter.get('/:minionId', (req, res, next) => {
     try {
-        const minion = getFromDatabaseById(req.params.minionId);
+        const minion = getFromDatabaseById('minions', req.params.minionId);
         if (minion) {
             res.send(minion)
         } else {
@@ -42,7 +42,8 @@ minionsRouter.get('/:minionId', (req, res, next) => {
 
 minionsRouter.put('/:minionId', (req, res, next) => {
     try{
-        
+        const updatedMinion = updateInstanceInDatabase('minions', req.body);
+        res.send(updatedMinion);
     } catch (err) {
         next(err);
     }
@@ -50,15 +51,15 @@ minionsRouter.put('/:minionId', (req, res, next) => {
 
 minionsRouter.delete('/:minionId', (req, res, next) => {
     try{
-        
+        const deleted = deleteFromDatabasebyId('minions', req.params.minionId);
+        if(deleted) {
+            res.status(204).send();
+        } else {
+            res.status(404).send();
+        }
     } catch (err) {
         next(err);
     }
 })
-
-if (process.env.NODE_ENV === 'development') {
-    // only use in development
-    app.use(errorhandler())
-  }
 
 module.exports = minionsRouter;
