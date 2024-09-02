@@ -4,9 +4,14 @@ const { getAllFromDatabase,
     getFromDatabaseById,
     addToDatabase,
     updateInstanceInDatabase,
-    deleteFromDatabasebyId,
-    deleteAllFromDatabase } = require('./db');
+    deleteFromDatabasebyId } = require('./db');
 
+
+const validateSalary = (req, res, next) =>  {
+    const salary = parseFloat(req.body.salary);
+    req.body.salary = salary;
+    next();
+}
 
 
 minionsRouter.get('/', (req, res, next) => {
@@ -18,7 +23,7 @@ minionsRouter.get('/', (req, res, next) => {
     }
 })
 
-minionsRouter.post('/', (req, res, next) => {
+minionsRouter.post('/', validateSalary, (req, res, next) => {
     try {
         const newMinion = addToDatabase('minions', req.body);
         res.status(201).send(newMinion);
@@ -40,7 +45,7 @@ minionsRouter.get('/:minionId', (req, res, next) => {
     }
 })
 
-minionsRouter.put('/:minionId', (req, res, next) => {
+minionsRouter.put('/:minionId', validateSalary, (req, res, next) => {
     try{
         const updatedMinion = updateInstanceInDatabase('minions', req.body);
         res.send(updatedMinion);
