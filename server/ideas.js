@@ -5,6 +5,7 @@ const { getAllFromDatabase,
     addToDatabase,
     updateInstanceInDatabase,
     deleteFromDatabasebyId } = require('./db');
+const checkMillionDollarIdea = require('./checkMillionDollarIdea')
 
 const validateIdeaId = (req, res, next) =>  {
     const ideaId = req.params.ideaId;
@@ -44,7 +45,7 @@ ideasRouter.get('/', (req, res, next) => {
     }
 });
 
-ideasRouter.post('/', validateIdeaNumbers, (req, res, next) => {
+ideasRouter.post('/', validateIdeaNumbers, checkMillionDollarIdea, (req, res, next) => {
     try{
         const newIdea = addToDatabase('ideas', req.body);
         res.status(201).send(newIdea);
