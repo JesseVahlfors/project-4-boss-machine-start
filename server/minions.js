@@ -13,6 +13,15 @@ const validateSalary = (req, res, next) =>  {
     next();
 }
 
+const validateMinionId = (req, res, next) => {
+    const minionId = req.params.minionId;
+    const minion = getFromDatabaseById('minions', minionId);
+    if(!minion) {
+        return res.status(404).send({error: 'Minion not found'});
+    }
+    next();
+}
+
 
 minionsRouter.get('/', (req, res, next) => {
     try {
@@ -32,7 +41,7 @@ minionsRouter.post('/', validateSalary, (req, res, next) => {
     }
 })
 
-minionsRouter.get('/:minionId', (req, res, next) => {
+minionsRouter.get('/:minionId', validateMinionId, (req, res, next) => {
     try {
         const minion = getFromDatabaseById('minions', req.params.minionId);
         if (minion) {
@@ -45,7 +54,7 @@ minionsRouter.get('/:minionId', (req, res, next) => {
     }
 })
 
-minionsRouter.put('/:minionId', validateSalary, (req, res, next) => {
+minionsRouter.put('/:minionId', validateSalary, validateMinionId, (req, res, next) => {
     try{
         const updatedMinion = updateInstanceInDatabase('minions', req.body);
         res.send(updatedMinion);
@@ -54,7 +63,7 @@ minionsRouter.put('/:minionId', validateSalary, (req, res, next) => {
     }
 })
 
-minionsRouter.delete('/:minionId', (req, res, next) => {
+minionsRouter.delete('/:minionId', validateMinionId, (req, res, next) => {
     try{
         const deleted = deleteFromDatabasebyId('minions', req.params.minionId);
         if(deleted) {
